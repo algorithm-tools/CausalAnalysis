@@ -6,20 +6,17 @@
 [![EN doc](https://img.shields.io/badge/document-English-blue.svg?style=socialflat-square&)](README.md)
 
 
-# Introduction
-Algorithmic implementation of indicators contribution analysis, causal inference using Java. Helps to quickly find the root cause of indicators
+# 简介
+指标归因分析、因果推断的算法实现，使用Java.帮助快速寻找指标根因
 
-# Feature
+# 特性
+**已支持**:
+- 通过 JS 散点计算快速定位根本原因维度.
+- 支持对指标进行贡献度拆解，以快速定位关键因素.
 
-Its main feature are as follows:
-
-**Supported**:
-- Rapid localisation of the root cause dimension by JS scatter calculation.
-- Supports quadratic contribution disaggregation of metrics to quickly locate key factors.
-
-**Plan**:
-- relevance analysis.
-- causal inference.
+**计划中**:
+- 相关性分析.
+- 因果推断.
 
 # Demos
 - [CausalAnalysis-Demos](https://github.com/algorithm-tools/CausalAnalysis/tree/main/src/test/java/org/algorithmtools/ca4j/example)
@@ -87,16 +84,16 @@ FactorTerm:E	5.0-->3.0	ChangeValue(ChangeRate):-2.0(-0.4)	ContributionValue(Cont
 Contribution Sum:-0.5(-0.02941176470588236)
 ```
 
-# Participate in Contributions
+# 参与贡献
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/algorithm-tools/CausalAnalysis/pulls)
 
-Welcome to join the community, build a win-win situation, please refer to the contribution process： [How to contribute](https://github.com/algorithm-tools/CausalAnalysis/blob/main/docs/developer_guide/Contribution_Guide.md).
+欢迎加入共建共赢， 贡献流程请参考：[参与贡献](https://github.com/algorithm-tools/CausalAnalysis/blob/main/docs/developer_guide/Contribution_Guide.md).
 
-Thank you to all the people who already contributed to CausalAnalysis!
+感谢所有做出贡献的人！
 
 [![Contributors](https://contrib.rocks/image?repo=algorithm-tools/CausalAnalysis)](https://github.com/algorithm-tools/CausalAnalysis/graphs/contributors)
 
 
-# Get Help
+# 获得帮助
 
-- Create an issue and describe it clearly.
+- 创建 issue，并描述清晰
