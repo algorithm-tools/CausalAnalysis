@@ -90,6 +90,43 @@ public class TestCalculator {
         System.out.println(calculate);
     }
 
+    @Test
+    public void testContributionDivisionCalculator_forZero(){
+        List<IndicatorSeries> indicatorSeriesX1Numerator = Arrays.asList(new IndicatorSeries(1, 100, "B"), new IndicatorSeries(2, 200, "C"), new IndicatorSeries(3, 300, "D"));
+        List<IndicatorSeries> indicatorSeriesX1Denominator = Arrays.asList(new IndicatorSeries(1, 20, "B"), new IndicatorSeries(2, 20, "C"), new IndicatorSeries(3, 0, "D"));
+        List<IndicatorSeries> indicatorSeriesX0Numerator = Arrays.asList(new IndicatorSeries(1, 100, "B"), new IndicatorSeries(2, 100, "C"), new IndicatorSeries(3, 100, "D"));
+        List<IndicatorSeries> indicatorSeriesX0Denominator = Arrays.asList(new IndicatorSeries(1, 20, "B"), new IndicatorSeries(2, 20, "C"), new IndicatorSeries(3, 0, "D"));
+        IndicatorDivisionSeries series = new IndicatorDivisionSeries("i-1", "i-1-name", IndicatorStatType.Unique_Continuity, indicatorSeriesX1Numerator, indicatorSeriesX1Denominator, indicatorSeriesX0Numerator, indicatorSeriesX0Denominator);
+
+        DivisionContributionCalculator calculator = new DivisionContributionCalculator();
+        calculator.init(new CausalAnalysisContext());
+        calculator.checkCompatibility(series, log);
+        ContributionResult calculate = calculator.calculate(series, log);
+
+        System.out.println(calculate);
+    }
+
+    @Test
+    public void testContributionDivisionCalculatorFromJsonData(){
+        String jsonData = "{\"comparisonDenominatorList\":[{\"logicalIndex\":\"Mobupps_agency\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"Bignox\",\"time\":1734004389699,\"value\":9.0},{\"logicalIndex\":\"Facebook\",\"time\":1734004389699,\"value\":373.0},{\"logicalIndex\":\"Google\",\"time\":1734004389699,\"value\":1020.0},{\"logicalIndex\":\"ASA\",\"time\":1734004389699,\"value\":69.0},{\"logicalIndex\":\"Unityads\",\"time\":1734004389699,\"value\":573.0},{\"logicalIndex\":\"my_media_source\",\"time\":1734004389699,\"value\":5.0},{\"logicalIndex\":\"Officialwebsite\",\"time\":1734004389699,\"value\":2.0},{\"logicalIndex\":\"organic\",\"time\":1734004389699,\"value\":836.0},{\"logicalIndex\":\"Bluestacks\",\"time\":1734004389699,\"value\":7.0},{\"logicalIndex\":\"Ldplayer\",\"time\":1734004389699,\"value\":19.0}],\"comparisonNumeratorList\":[{\"logicalIndex\":\"Mobupps_agency\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"Bignox\",\"time\":1734004389699,\"value\":95.0},{\"logicalIndex\":\"Facebook\",\"time\":1734004389699,\"value\":14166.51},{\"logicalIndex\":\"Google\",\"time\":1734004389699,\"value\":13670.95},{\"logicalIndex\":\"ASA\",\"time\":1734004389699,\"value\":862.14},{\"logicalIndex\":\"Unityads\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"my_media_source\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"Officialwebsite\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"organic\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"Bluestacks\",\"time\":1734004389699,\"value\":125.0},{\"logicalIndex\":\"Ldplayer\",\"time\":1734004389699,\"value\":190.0}],\"currentDenominatorList\":[{\"logicalIndex\":\"Mobupps_agency\",\"time\":1734004389699,\"value\":4.0},{\"logicalIndex\":\"Bignox\",\"time\":1734004389699,\"value\":7.0},{\"logicalIndex\":\"Facebook\",\"time\":1734004389699,\"value\":295.0},{\"logicalIndex\":\"Google\",\"time\":1734004389699,\"value\":1038.0},{\"logicalIndex\":\"ASA\",\"time\":1734004389699,\"value\":95.0},{\"logicalIndex\":\"Unityads\",\"time\":1734004389699,\"value\":597.0},{\"logicalIndex\":\"my_media_source\",\"time\":1734004389699,\"value\":1.0},{\"logicalIndex\":\"Officialwebsite\",\"time\":1734004389699,\"value\":5.0},{\"logicalIndex\":\"organic\",\"time\":1734004389699,\"value\":868.0},{\"logicalIndex\":\"Bluestacks\",\"time\":1734004389699,\"value\":9.0},{\"logicalIndex\":\"Ldplayer\",\"time\":1734004389699,\"value\":15.0}],\"currentNumeratorList\":[{\"logicalIndex\":\"Mobupps_agency\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"Bignox\",\"time\":1734004389699,\"value\":70.0},{\"logicalIndex\":\"Facebook\",\"time\":1734004389699,\"value\":12467.49},{\"logicalIndex\":\"Google\",\"time\":1734004389699,\"value\":12843.58},{\"logicalIndex\":\"ASA\",\"time\":1734004389699,\"value\":861.13},{\"logicalIndex\":\"Unityads\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"my_media_source\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"Officialwebsite\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"organic\",\"time\":1734004389699,\"value\":0.0},{\"logicalIndex\":\"Bluestacks\",\"time\":1734004389699,\"value\":80.0},{\"logicalIndex\":\"Ldplayer\",\"time\":1734004389699,\"value\":125.0}],\"indicator\":\"registerCost\",\"indicatorName\":\"注册账号成本\",\"statType\":\"Unique_Continuity\"}";
+        IndicatorDivisionSeries series = IndicatorSeriesUtil.transferFromJson(jsonData);
+
+        DivisionContributionCalculator calculator = new DivisionContributionCalculator();
+        calculator.init(new CausalAnalysisContext());
+        calculator.checkCompatibility(series, log);
+        ContributionResult calculate = calculator.calculate(series, log);
+
+        System.out.println(calculate);
+    }
+
+
+    @Test
+    public void test(){
+        double a = 0;
+        double b = 0;
+        double c = 1;
+        System.out.println((a / b) / c);
+    }
 
 
 }

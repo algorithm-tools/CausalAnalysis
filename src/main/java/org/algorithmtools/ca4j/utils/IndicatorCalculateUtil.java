@@ -139,9 +139,11 @@ public class IndicatorCalculateUtil {
      * <br/>before：current[a->1,b->2] comparison[b->3,c->4,d->5]
      * <br/>after：current[a->1,b->2,c->0,d->0] comparison[a->0,b->3,c->4,d->5]
      * @param divisionSeries
+     * @param alignDefaultValue 对齐默认值，避免无法计算
      * @return
      */
-    public static IndicatorDivisionSeries indicatorAlignThenSorted(IndicatorDivisionSeries divisionSeries) {
+    public static IndicatorDivisionSeries indicatorAlignThenSorted(IndicatorDivisionSeries divisionSeries, double alignDefaultValue) {
+        double denominatorZeroReplaceValue = alignDefaultValue;
         IndicatorDivisionSeries result = new IndicatorDivisionSeries(divisionSeries.getIndicator(), divisionSeries.getIndicatorName(), divisionSeries.getStatType());
         Map<String, IndicatorSeries> currentNumeratorMap = new HashMap<>();
         Map<String, IndicatorSeries> currentDenominatorMap = new HashMap<>();
@@ -162,29 +164,30 @@ public class IndicatorCalculateUtil {
                 currentNumeratorSeries = divisionSeries.getCurrentNumeratorList().get(i);
                 currentNumeratorMap.put(currentNumeratorSeries.getLogicalIndex(), currentNumeratorSeries);
                 if(!currentDenominatorMap.containsKey(currentNumeratorSeries.getLogicalIndex())){
-                    currentDenominatorMap.put(currentNumeratorSeries.getLogicalIndex(), new IndicatorSeries(currentNumeratorSeries.getTime(), 1, currentNumeratorSeries.getLogicalIndex()));
+                    currentDenominatorMap.put(currentNumeratorSeries.getLogicalIndex(), new IndicatorSeries(currentNumeratorSeries.getTime(), alignDefaultValue, currentNumeratorSeries.getLogicalIndex()));
                 }
                 // Comparison -> Current align
                 if(!comparisonNumeratorMap.containsKey(currentNumeratorSeries.getLogicalIndex())){
-                    comparisonNumeratorMap.put(currentNumeratorSeries.getLogicalIndex(), new IndicatorSeries(currentNumeratorSeries.getTime(), 1, currentNumeratorSeries.getLogicalIndex()));
+                    comparisonNumeratorMap.put(currentNumeratorSeries.getLogicalIndex(), new IndicatorSeries(currentNumeratorSeries.getTime(), alignDefaultValue, currentNumeratorSeries.getLogicalIndex()));
                 }
                 if(!comparisonDenominatorMap.containsKey(currentNumeratorSeries.getLogicalIndex())){
-                    comparisonDenominatorMap.put(currentNumeratorSeries.getLogicalIndex(), new IndicatorSeries(currentNumeratorSeries.getTime(), 1, currentNumeratorSeries.getLogicalIndex()));
+                    comparisonDenominatorMap.put(currentNumeratorSeries.getLogicalIndex(), new IndicatorSeries(currentNumeratorSeries.getTime(), alignDefaultValue, currentNumeratorSeries.getLogicalIndex()));
                 }
             }
 
             if(divisionSeries.getCurrentDenominatorList().size() - 1 >= i){
                 currentDenominatorSeries = divisionSeries.getCurrentDenominatorList().get(i);
+                currentDenominatorSeries = currentDenominatorSeries.getValue() != 0 ? currentDenominatorSeries : new IndicatorSeries(currentDenominatorSeries.getTime(), denominatorZeroReplaceValue, currentDenominatorSeries.getLogicalIndex());
                 currentDenominatorMap.put(currentDenominatorSeries.getLogicalIndex(), currentDenominatorSeries);
                 if(!currentNumeratorMap.containsKey(currentDenominatorSeries.getLogicalIndex())){
                     currentNumeratorMap.put(currentDenominatorSeries.getLogicalIndex(), new IndicatorSeries(currentDenominatorSeries.getTime(), 0, currentDenominatorSeries.getLogicalIndex()));
                 }
                 // Comparison -> Current align
                 if(!comparisonNumeratorMap.containsKey(currentDenominatorSeries.getLogicalIndex())){
-                    comparisonNumeratorMap.put(currentDenominatorSeries.getLogicalIndex(), new IndicatorSeries(currentDenominatorSeries.getTime(), 1, currentDenominatorSeries.getLogicalIndex()));
+                    comparisonNumeratorMap.put(currentDenominatorSeries.getLogicalIndex(), new IndicatorSeries(currentDenominatorSeries.getTime(), alignDefaultValue, currentDenominatorSeries.getLogicalIndex()));
                 }
                 if(!comparisonDenominatorMap.containsKey(currentDenominatorSeries.getLogicalIndex())){
-                    comparisonDenominatorMap.put(currentDenominatorSeries.getLogicalIndex(), new IndicatorSeries(currentDenominatorSeries.getTime(), 1, currentDenominatorSeries.getLogicalIndex()));
+                    comparisonDenominatorMap.put(currentDenominatorSeries.getLogicalIndex(), new IndicatorSeries(currentDenominatorSeries.getTime(), alignDefaultValue, currentDenominatorSeries.getLogicalIndex()));
                 }
             }
 
@@ -193,29 +196,30 @@ public class IndicatorCalculateUtil {
                 comparisonNumeratorSeries = divisionSeries.getComparisonNumeratorList().get(i);
                 comparisonNumeratorMap.put(comparisonNumeratorSeries.getLogicalIndex(), comparisonNumeratorSeries);
                 if(!comparisonDenominatorMap.containsKey(comparisonNumeratorSeries.getLogicalIndex())){
-                    comparisonDenominatorMap.put(comparisonNumeratorSeries.getLogicalIndex(), new IndicatorSeries(comparisonNumeratorSeries.getTime(), 1, comparisonNumeratorSeries.getLogicalIndex()));
+                    comparisonDenominatorMap.put(comparisonNumeratorSeries.getLogicalIndex(), new IndicatorSeries(comparisonNumeratorSeries.getTime(), alignDefaultValue, comparisonNumeratorSeries.getLogicalIndex()));
                 }
                 // Current -> Comparison align
                 if(!currentNumeratorMap.containsKey(comparisonNumeratorSeries.getLogicalIndex())){
-                    currentNumeratorMap.put(comparisonNumeratorSeries.getLogicalIndex(), new IndicatorSeries(comparisonNumeratorSeries.getTime(), 1, comparisonNumeratorSeries.getLogicalIndex()));
+                    currentNumeratorMap.put(comparisonNumeratorSeries.getLogicalIndex(), new IndicatorSeries(comparisonNumeratorSeries.getTime(), alignDefaultValue, comparisonNumeratorSeries.getLogicalIndex()));
                 }
                 if(!currentDenominatorMap.containsKey(comparisonNumeratorSeries.getLogicalIndex())){
-                    currentDenominatorMap.put(comparisonNumeratorSeries.getLogicalIndex(), new IndicatorSeries(comparisonNumeratorSeries.getTime(), 1, comparisonNumeratorSeries.getLogicalIndex()));
+                    currentDenominatorMap.put(comparisonNumeratorSeries.getLogicalIndex(), new IndicatorSeries(comparisonNumeratorSeries.getTime(), alignDefaultValue, comparisonNumeratorSeries.getLogicalIndex()));
                 }
             }
 
             if(divisionSeries.getComparisonDenominatorList().size() - 1 >= i){
                 comparisonDenominatorSeries = divisionSeries.getComparisonDenominatorList().get(i);
+                comparisonDenominatorSeries = comparisonDenominatorSeries.getValue() != 0 ? comparisonDenominatorSeries : new IndicatorSeries(comparisonDenominatorSeries.getTime(), denominatorZeroReplaceValue, comparisonDenominatorSeries.getLogicalIndex());
                 comparisonDenominatorMap.put(comparisonDenominatorSeries.getLogicalIndex(), comparisonDenominatorSeries);
                 if(!comparisonNumeratorMap.containsKey(comparisonDenominatorSeries.getLogicalIndex())){
                     comparisonNumeratorMap.put(comparisonDenominatorSeries.getLogicalIndex(), new IndicatorSeries(comparisonDenominatorSeries.getTime(), 0, comparisonDenominatorSeries.getLogicalIndex()));
                 }
                 // Current -> Comparison align
                 if(!currentNumeratorMap.containsKey(comparisonDenominatorSeries.getLogicalIndex())){
-                    currentNumeratorMap.put(comparisonDenominatorSeries.getLogicalIndex(), new IndicatorSeries(comparisonDenominatorSeries.getTime(), 1, comparisonDenominatorSeries.getLogicalIndex()));
+                    currentNumeratorMap.put(comparisonDenominatorSeries.getLogicalIndex(), new IndicatorSeries(comparisonDenominatorSeries.getTime(), alignDefaultValue, comparisonDenominatorSeries.getLogicalIndex()));
                 }
                 if(!currentDenominatorMap.containsKey(comparisonDenominatorSeries.getLogicalIndex())){
-                    currentDenominatorMap.put(comparisonDenominatorSeries.getLogicalIndex(), new IndicatorSeries(comparisonDenominatorSeries.getTime(), 1, comparisonDenominatorSeries.getLogicalIndex()));
+                    currentDenominatorMap.put(comparisonDenominatorSeries.getLogicalIndex(), new IndicatorSeries(comparisonDenominatorSeries.getTime(), alignDefaultValue, comparisonDenominatorSeries.getLogicalIndex()));
                 }
             }
 
@@ -266,9 +270,9 @@ public class IndicatorCalculateUtil {
         }
     }
 
-    public static double divide(double value, double divide){
+    public static double rateDivide(double value, double divide){
         if (divide == 0) {
-            return 1;
+            return 0;
         } else {
             return value / divide;
         }

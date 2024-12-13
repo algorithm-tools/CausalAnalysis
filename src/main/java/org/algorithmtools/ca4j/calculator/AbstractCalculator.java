@@ -44,7 +44,7 @@ public abstract class AbstractCalculator<D, R> {
      * @param log log
      * @return boolean true/false
      */
-    public abstract boolean checkCompatibility(D calculateData, CausalAnalysisLog log);
+    public abstract void checkCompatibility(D calculateData, CausalAnalysisLog log) throws Exception;
 
 
     public String getCalculatorName() {

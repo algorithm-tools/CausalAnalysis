@@ -44,7 +44,7 @@ public class PlusContributionCalculator extends AbstractCalculator<IndicatorPair
 
             indicatorCalculateResult = new IndicatorCalculateResult(x1_i, x0_i);
             indicatorCalculateResult.setChangeValue(x1_i.getValue() - x0_i.getValue());
-            indicatorCalculateResult.setChangeRate(IndicatorCalculateUtil.divide(indicatorCalculateResult.getChangeValue(), x0_i.getValue()));
+            indicatorCalculateResult.setChangeRate(IndicatorCalculateUtil.rateDivide(indicatorCalculateResult.getChangeValue(), x0_i.getValue()));
 
             result.add(indicatorCalculateResult);
         }
@@ -52,7 +52,7 @@ public class PlusContributionCalculator extends AbstractCalculator<IndicatorPair
         result.setIndicatorComparisonValue(X0);
         result.setIndicatorCurrentValue(X1);
         result.setIndicatorChangeValue(X1 - X0);
-        result.setIndicatorChangeRate(IndicatorCalculateUtil.divide(result.getIndicatorChangeValue(), X0));
+        result.setIndicatorChangeRate(IndicatorCalculateUtil.rateDivide(result.getIndicatorChangeValue(), X0));
 
         // Calculate contribution
         IndicatorCalculateResult calculateResult;
@@ -60,23 +60,22 @@ public class PlusContributionCalculator extends AbstractCalculator<IndicatorPair
         for (int i = 0; i < result.getCalculateResults().size(); i++) {
             calculateResult = result.getCalculateResults().get(i);
             calculateResult.setContributeValue(calculateResult.getChangeValue());
-            calculateResult.setContributeRate(IndicatorCalculateUtil.divide(calculateResult.getChangeValue() ,X0));
+            calculateResult.setContributeRate(IndicatorCalculateUtil.rateDivide(calculateResult.getChangeValue() ,X0));
             totalAbsContributeRate += Math.abs(calculateResult.getContributeRate());
             calculateResult.setInfluenceType(calculateResult.getChangeValue() > 0 ? InfluenceType.UP : InfluenceType.DOWN);
         }
 
         // Calculate contribution proportion
         final double _totalAbsContributeRate = totalAbsContributeRate;
-        result.getCalculateResults().forEach(v -> v.setContributeProportion(IndicatorCalculateUtil.divide(Math.abs(v.getContributeRate()), _totalAbsContributeRate)));
+        result.getCalculateResults().forEach(v -> v.setContributeProportion(IndicatorCalculateUtil.rateDivide(Math.abs(v.getContributeRate()), _totalAbsContributeRate)));
 
         return result;
     }
 
     @Override
-    public boolean checkCompatibility(IndicatorPairSeries calculateData, CausalAnalysisLog log) {
+    public void checkCompatibility(IndicatorPairSeries calculateData, CausalAnalysisLog log) {
         if (CollectionUtil.isEmpty(calculateData.getCurrentList()) && CollectionUtil.isEmpty(calculateData.getComparisonList())) {
-            return false;
+            throw new IllegalArgumentException("Empty data list! data:" + calculateData);
         }
-        return true;
     }
 }

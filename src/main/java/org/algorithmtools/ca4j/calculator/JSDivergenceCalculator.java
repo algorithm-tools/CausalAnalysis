@@ -32,11 +32,10 @@ public class JSDivergenceCalculator extends AbstractCalculator<IndicatorPairSeri
     }
 
     @Override
-    public boolean checkCompatibility(IndicatorPairSeries calculateData, CausalAnalysisLog log) {
+    public void checkCompatibility(IndicatorPairSeries calculateData, CausalAnalysisLog log) {
         if (CollectionUtil.isEmpty(calculateData.getCurrentList()) && CollectionUtil.isEmpty(calculateData.getComparisonList())) {
-            return false;
+            throw new IllegalArgumentException("Empty data list! data:" + calculateData);
         }
-        return true;
     }
 
     /**

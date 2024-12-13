@@ -24,7 +24,7 @@ public class TestIndicatorCalculateUtil {
         System.out.println("========================================================================");
         System.out.println();
 
-        IndicatorDivisionSeries alignResult = IndicatorCalculateUtil.indicatorAlignThenSorted(series);
+        IndicatorDivisionSeries alignResult = IndicatorCalculateUtil.indicatorAlignThenSorted(series, 0.000001);
         System.out.println(alignResult);
     }
 

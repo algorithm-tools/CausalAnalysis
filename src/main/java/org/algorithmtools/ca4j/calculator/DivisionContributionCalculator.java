@@ -25,7 +25,8 @@ public class DivisionContributionCalculator extends AbstractCalculator<Indicator
 
     @Override
     public ContributionResult calculate(IndicatorDivisionSeries calculateData, CausalAnalysisLog log) {
-        IndicatorDivisionSeries sortedData = IndicatorCalculateUtil.indicatorAlignThenSorted(calculateData);
+        double zeroReplaceValue = 0.000001;
+        IndicatorDivisionSeries sortedData = IndicatorCalculateUtil.indicatorAlignThenSorted(calculateData, zeroReplaceValue);
         ContributionResult result = new ContributionResult();
 
         /*
@@ -47,13 +48,12 @@ public class DivisionContributionCalculator extends AbstractCalculator<Indicator
             y0 += sortedData.getComparisonNumeratorList().get(i).getValue();
             y1 += sortedData.getCurrentNumeratorList().get(i).getValue();
         }
-        double X0 = y0 / z0;
-        double X1 = y1 / z1;
-        // TODO if X0 or X1 is 0, how to calculate
+        double X0 = IndicatorCalculateUtil.rateDivide(y0, z0);
+        double X1 = IndicatorCalculateUtil.rateDivide(y1, z1);
         result.setIndicatorComparisonValue(X0);
         result.setIndicatorCurrentValue(X1);
         result.setIndicatorChangeValue(X1 - X0);
-        result.setIndicatorChangeRate(result.getIndicatorChangeValue() / X0);
+        result.setIndicatorChangeRate(IndicatorCalculateUtil.rateDivide(result.getIndicatorChangeValue(), X0));
 
         double X1_i;
         double X0_i;
@@ -65,39 +65,42 @@ public class DivisionContributionCalculator extends AbstractCalculator<Indicator
         IndicatorSeries indicator_x1_i;
         IndicatorSeries indicator_x0_i;
         double totalAbsContributeRate = 0;
+        boolean X1_i_denominatorIsZero;
+        boolean X0_i_denominatorIsZero;
         // calculate change
         for (int i = 0; i < sortedData.getCurrentNumeratorList().size(); i++) {
-            X1_i = sortedData.getCurrentNumeratorList().get(i).getValue() / sortedData.getCurrentDenominatorList().get(i).getValue();
-            X0_i = sortedData.getComparisonNumeratorList().get(i).getValue() / sortedData.getComparisonDenominatorList().get(i).getValue();
-            Z0_i = sortedData.getComparisonDenominatorList().get(i).getValue() / z0;
-            Z1_i = sortedData.getCurrentDenominatorList().get(i).getValue() / z1;
-            A_i = (X1_i - X0_i) * Z0_i;
+            X1_i_denominatorIsZero = zeroReplaceValue == sortedData.getCurrentDenominatorList().get(i).getValue();
+            X0_i_denominatorIsZero = zeroReplaceValue == sortedData.getComparisonDenominatorList().get(i).getValue();
+            X1_i = IndicatorCalculateUtil.rateDivide(sortedData.getCurrentNumeratorList().get(i).getValue(), sortedData.getCurrentDenominatorList().get(i).getValue());
+            X0_i = IndicatorCalculateUtil.rateDivide(sortedData.getComparisonNumeratorList().get(i).getValue(), sortedData.getComparisonDenominatorList().get(i).getValue());
+            Z0_i = IndicatorCalculateUtil.rateDivide(sortedData.getComparisonDenominatorList().get(i).getValue(), z0);
+            Z1_i = IndicatorCalculateUtil.rateDivide(sortedData.getCurrentDenominatorList().get(i).getValue(), z1);
+            A_i = (X1_i - X0_i) * (Z0_i);
             B_i = (Z1_i - Z0_i) * (X1_i - X0);
 
-            indicator_x1_i = new IndicatorSeries(sortedData.getCurrentNumeratorList().get(i).getTime(), X1_i, sortedData.getCurrentNumeratorList().get(i).getLogicalIndex());
-            indicator_x0_i = new IndicatorSeries(sortedData.getComparisonNumeratorList().get(i).getTime(), X0_i, sortedData.getComparisonNumeratorList().get(i).getLogicalIndex());
+            indicator_x1_i = new IndicatorSeries(sortedData.getCurrentNumeratorList().get(i).getTime(), X1_i_denominatorIsZero ? 0 : X1_i, sortedData.getCurrentNumeratorList().get(i).getLogicalIndex());
+            indicator_x0_i = new IndicatorSeries(sortedData.getComparisonNumeratorList().get(i).getTime(), X0_i_denominatorIsZero ? 0 : X0_i, sortedData.getComparisonNumeratorList().get(i).getLogicalIndex());
             indicatorCalculateResult = new IndicatorCalculateResult(indicator_x1_i, indicator_x0_i);
             indicatorCalculateResult.setChangeValue(indicator_x1_i.getValue() - indicator_x0_i.getValue());
-            indicatorCalculateResult.setChangeRate(indicatorCalculateResult.getChangeValue() / indicator_x0_i.getValue());
+            indicatorCalculateResult.setChangeRate(IndicatorCalculateUtil.rateDivide(indicatorCalculateResult.getChangeValue(), indicator_x0_i.getValue()));
             indicatorCalculateResult.setInfluenceType(indicatorCalculateResult.getChangeValue() > 0 ? InfluenceType.UP : InfluenceType.DOWN);
             indicatorCalculateResult.setContributeValue(A_i + B_i);
-            indicatorCalculateResult.setContributeRate(indicatorCalculateResult.getContributeValue() / X0);
+            indicatorCalculateResult.setContributeRate(IndicatorCalculateUtil.rateDivide(indicatorCalculateResult.getContributeValue(), X0));
             totalAbsContributeRate += Math.abs(indicatorCalculateResult.getContributeRate());
 
             result.add(indicatorCalculateResult);
         }
 
         final double _totalAbsContributeRate = totalAbsContributeRate;
-        result.getCalculateResults().forEach(v -> v.setContributeProportion(IndicatorCalculateUtil.divide(Math.abs(v.getContributeRate()), _totalAbsContributeRate)));
+        result.getCalculateResults().forEach(v -> v.setContributeProportion(IndicatorCalculateUtil.rateDivide(Math.abs(v.getContributeRate()), _totalAbsContributeRate)));
 
         return result;
     }
 
     @Override
-    public boolean checkCompatibility(IndicatorDivisionSeries calculateData, CausalAnalysisLog log) {
+    public void checkCompatibility(IndicatorDivisionSeries calculateData, CausalAnalysisLog log) {
         if (CollectionUtil.isEmpty(calculateData.getCurrentNumeratorList()) && CollectionUtil.isEmpty(calculateData.getCurrentDenominatorList())) {
-            return false;
+            throw new IllegalArgumentException("Empty data list! data:" + calculateData);
         }
-        return true;
     }
 }
