@@ -1,5 +1,7 @@
 package org.algorithmtools.ca4j.pojo.result;
 
+import org.algorithmtools.ca4j.utils.DecimalUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,8 +88,8 @@ public class ContributionResult extends CausalAnalysisResult{
             builder.append("\nFactorTerm:").append(cr.getFactorTerm()).append("\t").append(cr.getComparisonFactorTermIndicator().getValue()).append("-->").append(cr.getCurrentFactorTermIndicator().getValue());
             builder.append("\t").append("ChangeValue(ChangeRate):").append(cr.getChangeValue()).append("(").append(cr.getChangeRate()).append(")");
             builder.append("\t").append("ContributionValue(ContributionRate):").append(cr.getContributeValue()).append("(").append(cr.getContributeRate()).append(")").append("\t ContributionProportion:").append(cr.getContributeProportion());
-            totalContributionValue += cr.getContributeValue();
-            totalContributionRate += cr.getContributeRate();
+            totalContributionValue = DecimalUtils.add(totalContributionValue, cr.getContributeValue()).doubleValue();
+            totalContributionRate = DecimalUtils.add(totalContributionRate, cr.getContributeRate()).doubleValue();
         }
         builder.append("\nContribution Sum:").append(totalContributionValue).append("(").append(totalContributionRate).append(")");
         return builder.toString();

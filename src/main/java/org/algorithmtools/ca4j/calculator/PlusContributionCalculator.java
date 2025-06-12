@@ -9,6 +9,7 @@ import org.algorithmtools.ca4j.pojo.IndicatorSeries;
 import org.algorithmtools.ca4j.pojo.result.IndicatorCalculateResult;
 import org.algorithmtools.ca4j.pojo.result.ContributionResult;
 import org.algorithmtools.ca4j.utils.CollectionUtil;
+import org.algorithmtools.ca4j.utils.DecimalUtils;
 import org.algorithmtools.ca4j.utils.IndicatorCalculateUtil;
 
 /**
@@ -44,7 +45,7 @@ public class PlusContributionCalculator extends AbstractCalculator<IndicatorPair
 
             indicatorCalculateResult = new IndicatorCalculateResult(x1_i, x0_i);
             indicatorCalculateResult.setChangeValue(x1_i.getValue() - x0_i.getValue());
-            indicatorCalculateResult.setChangeRate(IndicatorCalculateUtil.rateDivide(indicatorCalculateResult.getChangeValue(), x0_i.getValue()));
+            indicatorCalculateResult.setChangeRate(DecimalUtils.rateDivide(indicatorCalculateResult.getChangeValue(), x0_i.getValue()));
 
             result.add(indicatorCalculateResult);
         }
@@ -52,7 +53,7 @@ public class PlusContributionCalculator extends AbstractCalculator<IndicatorPair
         result.setIndicatorComparisonValue(X0);
         result.setIndicatorCurrentValue(X1);
         result.setIndicatorChangeValue(X1 - X0);
-        result.setIndicatorChangeRate(IndicatorCalculateUtil.rateDivide(result.getIndicatorChangeValue(), X0));
+        result.setIndicatorChangeRate(DecimalUtils.rateDivide(result.getIndicatorChangeValue(), X0));
 
         // Calculate contribution
         IndicatorCalculateResult calculateResult;
@@ -60,14 +61,23 @@ public class PlusContributionCalculator extends AbstractCalculator<IndicatorPair
         for (int i = 0; i < result.getCalculateResults().size(); i++) {
             calculateResult = result.getCalculateResults().get(i);
             calculateResult.setContributeValue(calculateResult.getChangeValue());
-            calculateResult.setContributeRate(IndicatorCalculateUtil.rateDivide(calculateResult.getChangeValue() ,X0));
+            calculateResult.setContributeRate(DecimalUtils.rateDivide(calculateResult.getChangeValue() ,X0));
             totalAbsContributeRate += Math.abs(calculateResult.getContributeRate());
             calculateResult.setInfluenceType(calculateResult.getChangeValue() > 0 ? InfluenceType.UP : InfluenceType.DOWN);
         }
 
         // Calculate contribution proportion
         final double _totalAbsContributeRate = totalAbsContributeRate;
-        result.getCalculateResults().forEach(v -> v.setContributeProportion(IndicatorCalculateUtil.rateDivide(Math.abs(v.getContributeRate()), _totalAbsContributeRate)));
+        result.getCalculateResults().forEach(v -> {
+            v.setContributeProportion(DecimalUtils.rateDivide(Math.abs(v.getContributeRate()), _totalAbsContributeRate));
+
+            // adjust precision
+            v.setChangeValue(DecimalUtils.adjustPrecision(v.getChangeValue(), 4));
+            v.setChangeRate(DecimalUtils.adjustPrecision(v.getChangeRate(), 4));
+            v.setContributeValue(DecimalUtils.adjustPrecision(v.getContributeValue(), 4));
+            v.setContributeProportion(DecimalUtils.adjustPrecision(v.getContributeProportion(), 4));
+            v.setContributeRate(DecimalUtils.adjustPrecision(v.getContributeRate(), 4));
+        });
 
         return result;
     }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.algorithmtools.ca4j.enumtype.IndicatorStatType;
 import org.algorithmtools.ca4j.pojo.IndicatorDivisionSeries;
+import org.algorithmtools.ca4j.pojo.IndicatorPairSeries;
 import org.algorithmtools.ca4j.pojo.IndicatorSeries;
 
 import java.util.ArrayList;
@@ -43,6 +44,21 @@ public class IndicatorSeriesUtil {
         series.setCurrentDenominatorList(transferFromJsonArray(currentDenominatorList));
         series.setComparisonNumeratorList(transferFromJsonArray(comparisonNumeratorList));
         series.setComparisonDenominatorList(transferFromJsonArray(comparisonDenominatorList));
+
+        return series;
+    }
+
+    public static IndicatorPairSeries transferFromJsonForPairSeries(String jsonString){
+        JSONObject jsonData = JSONObject.parseObject(jsonString);
+        JSONArray currentList = jsonData.getJSONArray("currentList");
+        JSONArray comparisonList = jsonData.getJSONArray("comparisonList");
+        String indicator = jsonData.getString("indicator");
+        String indicatorName = jsonData.getString("indicatorName");
+        String statType = jsonData.getString("statType");
+
+        IndicatorPairSeries series = new IndicatorPairSeries(indicator, indicatorName, IndicatorStatType.valueOf(statType));
+        series.setCurrentList(transferFromJsonArray(currentList));
+        series.setComparisonList(transferFromJsonArray(comparisonList));
 
         return series;
     }

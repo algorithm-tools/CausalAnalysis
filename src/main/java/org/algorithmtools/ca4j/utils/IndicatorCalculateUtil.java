@@ -260,23 +260,4 @@ public class IndicatorCalculateUtil {
         return probabilityDistribution;
     }
 
-    public static double exclude0Multiply(double a, double b){
-        if (a == 0) {
-            return b;
-        } else if (b == 0){
-            return a;
-        } else {
-            return a * b;
-        }
-    }
-
-    public static double rateDivide(double value, double divide){
-        if (divide == 0) {
-            return 0;
-        } else {
-            return value / divide;
-        }
-    }
-
-
 }
