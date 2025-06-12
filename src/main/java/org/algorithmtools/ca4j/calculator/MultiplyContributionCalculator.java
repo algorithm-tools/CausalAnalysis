@@ -83,6 +83,10 @@ public class MultiplyContributionCalculator extends AbstractCalculator<Indicator
             v.setContributeProportion(DecimalUtils.adjustPrecision(v.getContributeProportion(), 4));
             v.setContributeRate(DecimalUtils.adjustPrecision(v.getContributeRate(), 4));
         });
+        result.setIndicatorComparisonValue(DecimalUtils.adjustPrecision(result.getIndicatorComparisonValue(), 4));
+        result.setIndicatorCurrentValue(DecimalUtils.adjustPrecision(result.getIndicatorCurrentValue(), 4));
+        result.setIndicatorChangeRate(DecimalUtils.adjustPrecision(result.getIndicatorChangeRate(), 4));
+        result.setIndicatorChangeValue(DecimalUtils.adjustPrecision(result.getIndicatorChangeValue(), 4));
 
         return result;
     }
