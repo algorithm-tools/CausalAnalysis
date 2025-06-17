@@ -28,7 +28,7 @@ public class JSDivergenceCalculator extends AbstractCalculator<IndicatorPairSeri
     public JSDivergenceResult calculate(IndicatorPairSeries calculateData, CausalAnalysisLog log) {
         ProbabilityDistribution probabilityDistribution = IndicatorCalculateUtil.indicatorTransferToPD(calculateData);
         double jsd = jsDivergence(probabilityDistribution.getP(), probabilityDistribution.getQ());
-        return new JSDivergenceResult(jsd);
+        return new JSDivergenceResult(calculateData.getIndicator(),jsd);
     }
 
     @Override
